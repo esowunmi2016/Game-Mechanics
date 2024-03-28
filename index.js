@@ -5,6 +5,12 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext("2d");
 var floor = document.getElementById('floor');
 var ctx2 = floor.getContext("2d");
+var jumpButton = document.getElementById("jumpButton");
+var leftButton = document.getElementById("leftButton");
+var rightButton = document.getElementById("rightButton");
+var score = document.getElementById('score');
+var gameOver = document.getElementById('gameOver');
+var restart = document.getElementById('restart');
 
 var backGround = {
     drawBG : function(){
@@ -21,17 +27,46 @@ var backGround = {
 }
 
 class Box {
-    constructor(height, width){
+    constructor(x, y, width, height, color = "green"){
+        this.color = color;
+        this.x = x;
+        this.y = y;
+        this.gravitySpeed = 0;
         this.height = height;
         this.width = width;
+        this.box = document.getElementById("obstacle");
+        this.box.height = 200;
+        this.box.width = 20;
+        this.ctx = box.getContext('2d')
     }
 
     draw(){
-        var box = document.getElementById("box");
-        var ctx3 = box.getContext("2d");
-        ctx3.beginPath();
-        ctx3.arc(95, 50, 40, 0, 2 * Math.PI);
-        ctx3.stroke();
+        this.ctx.fillStyle = this.color;
+        this.ctx.fillRect(this.x, this.y, this.height, this.width);
+    }
+
+    clear(){
+        this.ctx.clear
+    }
+
+    update(){
+        // this.ctx.fillStyle = "green";
+        this.gravitySpeed += Gravity;
+        this.y += this.gravitySpeed;
+
+        if(this.y > container.offsetHeight){
+            this.y = 0;
+            this.x = Math.floor(Math.random() * container.offsetWidth - this.width)
+            this.gravitySpeed = 0
+            
+
+            score.innerHTML = parseInt(score.innerHTML) + 1
+
+        }
+        // console.log(this.y)
+        // this.ctx.fillStyle = "green";
+        // this.ctx.fillRect(this.x, this.y, this.height, this.width);
+        // ctx.fillRect(x, y, 150, 100);
     }
 
     
@@ -147,20 +182,65 @@ class Circle {
 
 
 
+
+
 function start(){
+    let box1 = new Circle(20, container.offsetWidth/2, container.offsetHeight/2);
+    let obs = new Box(10, 10, 100,100);
+
+    
+    
+    
     document.addEventListener('keydown', function(event){box1.keypress(event.key)});
     document.addEventListener('keyup', function(event){box1.keyup(event.key)});
 
+    jumpButton.addEventListener("click", function(){box1.keypress(' ')});
+    // jumpButton.addEventListener("click", function(){box1.keyup(' ')})
+    leftButton.addEventListener("click", function(){box1.keypress('ArrowLeft')});
+    leftButton.addEventListener("click", function(){box1.keyup('ArrowLeft')})
+    rightButton.addEventListener("click", function(){box1.keypress('ArrowRight')});
+    rightButton.addEventListener("click", function(){box1.keyup('ArrowRight')});
+
     backGround.drawBG();
-    let box1 = new Circle(20, container.offsetWidth/2, container.offsetHeight/2);
-    box1.draw();
+   
     
     setInterval(update, 20);
+
+    const range = (start, stop, step) =>
+    Array.from(
+    { length: (stop - start) / step + 1 },
+    (value, index) => start + index * step
+    );
+
     
     function update(){
-        box1.clear();
-        box1.newPos();
-        box1.update();
+ 
+
+        if(
+            obs.x <= box1.x && obs.x + obs.width >= box1.x &&
+            obs.y + obs.height >= box1.y 
+        ){
+            obs.color = 'red'
+            gameOver.style.visibility = 'visible'
+            restart.addEventListener('click', function(){
+                gameOver.style.visibility = 'hidden'
+                box1 = new Circle(20, container.offsetWidth/2, container.offsetHeight/2);
+                obs = new Box(10, 10, 100,100);
+                score.innerHTML = 0
+                update()
+            })
+          
+        }else{
+
+
+            box1.clear();
+            box1.newPos();
+            box1.update();
+    
+            obs.draw("green");
+            obs.update();
+            obs.clear();
+        }
     }
 }
 

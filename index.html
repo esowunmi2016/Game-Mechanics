@@ -12,11 +12,34 @@
         <canvas id="floor"></canvas>
         <canvas id="box"></canvas> 
         <canvas id="canvas"></canvas>
+        <canvas id="obstacle"></canvas>
 
-        <div id="controls">
+
+        <div id="controls" class="desktop center">
             left: left arrow key
             Right: right arrow key 
             jump: space bar
+        </div>
+
+        <div class="mobile">
+            <div class="left">
+                <button id="leftButton" class="gameButton">
+                    <span>&#8678;</span>
+                </button>
+                <button id="rightButton" class="gameButton">
+                    <span>&#8680;</span>
+                </button>
+            </div>
+           
+            <button id="jumpButton" class="gameButton right">Jump</button>
+        </div>
+
+        <!-- <div id="score">0</div> -->
+        <button id="score" class="gameButton center" style="width: 100%;">0</button>
+
+        <div id="gameOver" class="center">
+            <div>Game Over</div>
+            <button id="restart" class="gameButton center" style="width: 66%;">Restart</button>
         </div>
     </div>
 
