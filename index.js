@@ -11,6 +11,7 @@ var rightButton = document.getElementById("rightButton");
 var score = document.getElementById('score');
 var gameOver = document.getElementById('gameOver');
 var restart = document.getElementById('restart');
+var init = true;
 
 var backGround = {
     drawBG : function(){
@@ -26,6 +27,7 @@ var backGround = {
     },
 }
 
+// Obstacles
 class Box {
     constructor(x, y, width, height, color = "green"){
         this.color = color;
@@ -58,20 +60,15 @@ class Box {
             this.y = 0;
             this.x = Math.floor(Math.random() * container.offsetWidth - this.width)
             this.gravitySpeed = 0
-            
-
             score.innerHTML = parseInt(score.innerHTML) + 1
-
         }
-        // console.log(this.y)
-        // this.ctx.fillStyle = "green";
-        // this.ctx.fillRect(this.x, this.y, this.height, this.width);
-        // ctx.fillRect(x, y, 150, 100);
     }
 
     
 }
 
+// plyer
+// the draw attribute doesnt use the proper x coordinate, use the update attribute instead
 class Circle {
     constructor(radius, x, y, ){
         this.radius = radius;
@@ -106,13 +103,10 @@ class Circle {
                 this.x += this.speedX;
             }
             
-            
             //Gravity Update
             if(this.y === container.offsetHeight - floor.height*4){
                 this.gravitySpeed = 0
             }
-            
-            
             this.hitTop();
             this.gravitySpeed += this.gravity;
             this.y += this.speedY + this.gravitySpeed;
@@ -180,47 +174,35 @@ class Circle {
     }
 }
 
-
-
-
-
 function start(){
     let box1 = new Circle(20, container.offsetWidth/2, container.offsetHeight/2);
     let obs = new Box(10, 10, 100,100);
-
-    
-    
     
     document.addEventListener('keydown', function(event){box1.keypress(event.key)});
     document.addEventListener('keyup', function(event){box1.keyup(event.key)});
-
     jumpButton.addEventListener("click", function(){box1.keypress(' ')});
-    // jumpButton.addEventListener("click", function(){box1.keyup(' ')})
     leftButton.addEventListener("click", function(){box1.keypress('ArrowLeft')});
     leftButton.addEventListener("click", function(){box1.keyup('ArrowLeft')})
     rightButton.addEventListener("click", function(){box1.keypress('ArrowRight')});
     rightButton.addEventListener("click", function(){box1.keyup('ArrowRight')});
+    score.addEventListener('click', ()=> {
+        if(init){
+            init = false
+            score.innerHTML = 0
+            setInterval(update, 20)
+        }
+    });
 
     backGround.drawBG();
    
-    
-    setInterval(update, 20);
+    box1.update();
+    // setInterval(update, 20);
 
-    const range = (start, stop, step) =>
-    Array.from(
-    { length: (stop - start) / step + 1 },
-    (value, index) => start + index * step
-    );
-
-    
     function update(){
- 
-
-        if(
-            obs.x <= box1.x && obs.x + obs.width >= box1.x &&
+        if( 
+            obs.x <= box1.x + box1.radius && obs.x + obs.width >= box1.x - box1.radius &&
             obs.y + obs.height >= box1.y 
         ){
-            obs.color = 'red'
             gameOver.style.visibility = 'visible'
             restart.addEventListener('click', function(){
                 gameOver.style.visibility = 'hidden'
@@ -228,11 +210,8 @@ function start(){
                 obs = new Box(10, 10, 100,100);
                 score.innerHTML = 0
                 update()
-            })
-          
+            })  
         }else{
-
-
             box1.clear();
             box1.newPos();
             box1.update();
