@@ -1,6 +1,6 @@
 body {
     overflow: hidden; /* Hide scrollbars */
-  }
+}
 
 #container{
     max-width: 100vw;
@@ -17,6 +17,12 @@ body {
     position:absolute;
 }
 
+#box2{
+    position:absolute;
+    z-index: 9;
+
+}
+
 #obstacle{
     position:absolute;
     z-index: 10;
@@ -27,7 +33,7 @@ body {
     --😀😀: #4836bb;
     --😀😀😀: #654dff63;
     cursor: pointer;
-    /* width: 100%; */
+    width: 100%;
     height: 48px;
     display: inline;
     align-items: center;
@@ -44,17 +50,33 @@ body {
     transform: skew(-10deg);
     transition: all .001s ease;
     filter: drop-shadow(0 15px 20px var(--😀😀😀));
+    margin:7%;
+
 }
   
 .gameButton:active {
-    letter-spacing: 0px;
+    /* letter-spacing: 0px; */
     transform: skew(-10deg) translateY(8px);
     box-shadow: 0 0 0 var(--😀😀😀);
 }
 
 .mobile {
+    display: block;
+    justify-content: center;
+    width:100%;
+    height: 10%;
+    position: absolute;
+    top: 100%;
+    background-color: #4dedff;
+}
+
+.mobileContainer{
     display: flex;
-    justify-content: space-between;
+    background-color: red;
+}
+
+.directionBtn{
+    width: 73vw;
 }
 
 .desktop {
@@ -71,30 +93,102 @@ body {
 }
 
 .center {
-    /* border: 5px solid; */
     margin: auto;
     width: 50%;
     padding: 10px;
     text-align: center;
 }
 
-.left{
-    display: flex;
-    width:33%;
-}
-
-.right{
-    margin-right: 0%;
-}
-
-#leftButton{
-    width: 100%;
-}
-
-#rightButton{
-    width: 100%;
-}
 
 #gameOver{
     visibility:hidden;
 }
+
+.btnPage{
+    /* background-color: rgb(24, 30, 207); */
+    position: absolute;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    align-self: center;
+    top: 0;
+    height: 100%;
+    width: 100%;
+    /* left: 0; */
+}
+.btnContainer{
+    display: block;
+}
+.btn{
+    display: block;
+}
+
+.restart{
+    position: relative;
+    top: 10vh;
+}
+
+#pause{
+    /* background-color: red; */
+    position: fixed;
+    top:62%;
+    left: 80%;
+    width:10%;
+    height: 10%;
+}
+
+/*------Pause Checkbox Settings ------*/
+.container {
+    --color: #a5a5b0;
+    --size: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    font-size: var(--size);
+    user-select: none;
+    fill: var(--color);
+    height: 100%;
+  }
+  
+  .container .play {
+    position: absolute;
+    animation: keyframes-fill .5s;
+  }
+  
+  .container .pause {
+    position: absolute;
+    display: none;
+    animation: keyframes-fill .5s;
+  }
+  
+  /* ------ On check event ------ */
+  .container input:checked ~ .play {
+    display: none;
+  }
+  
+  .container input:checked ~ .pause {
+    display: block;
+  }
+  
+  /* ------ Hide the default checkbox ------ */
+  .container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* ------ Animation ------ */
+  @keyframes keyframes-fill {
+    0% {
+      transform: rotate(-180deg) scale(0);
+      opacity: 0;
+    }
+  
+    50% {
+      transform: rotate(-10deg) scale(1.2);
+    }
+  }
