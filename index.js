@@ -345,16 +345,16 @@ class Circle {
               this.speedY = 0;
               hitStun ? this.hitStun() : []
               if(this.speedX > 0){
-                    this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run.png'
+                    this.img.src = 'Homeless_1/Run.png'
                     this.action = ['run', 1]
               }else if(this.speedX < 0){
-                this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run2.png'
+                this.img.src = 'Homeless_1/Run2.png'
                 this.action = ['run', 1]
               }else if(this.xdir == 'right'){
-                this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Idle.png'
+                this.img.src = 'Homeless_1/Idle.png'
                 this.action = ['idle', 1]
               }else if(this.xdir == 'left'){
-                this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Idle2.png'
+                this.img.src = 'Homeless_1/Idle2.png'
                 this.action = ['idle', 1]
               }
             }
@@ -579,14 +579,14 @@ class Circle {
                 case('ArrowLeft'):
                     this.speedX -= 15;
                     this.xdir = 'left'
-                    this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run2.png'
+                    this.img.src = 'Homeless_1/Run2.png'
                     this.action = ['run', 1]
                     this.speedX < 15 ? this.speedX = -15 : this.speedX = this.speedX
                     break;
                 case('ArrowRight'):
                     this.speedX += 15;
                     this.xdir = 'right'
-                    this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run.png'
+                    this.img.src = 'Homeless_1/Run2.png'
                     this.action = ['run', 1]
                     this.speedX > 15 ? this.speedX = 15 : this.speedX = this.speedX
 
@@ -600,10 +600,10 @@ class Circle {
                     const myInterval = setInterval(()=>{
                         if(this.speedX < 0){
                             this.speedX += 3;
-                            this.airborne ? this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run2.png' : this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run2.png'
+                            this.airborne ? this.img.src = 'Homeless_1/Run2.png' : this.img.src = 'Homeless_1/Run2.png'
                         }else{
                             clearInterval(myInterval);
-                            this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Idle2.png'
+                            this.img.src = 'Homeless_1/Idle2.png'
                         };
                     }, 100);
                     break;
@@ -611,10 +611,10 @@ class Circle {
                     const myInterval2 = setInterval(()=>{
                         if(this.speedX > 0){
                             this.speedX -= 3;
-                            this.airborne ? this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run.png' : this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Run.png'
+                            this.airborne ? this.img.src = 'Homeless_1/Run.png' : this.img.src = 'Homeless_1/Run.png'
                         }else{
                             clearInterval(myInterval2)
-                            this.img.src = '/Users/esowunmi/Downloads/craftpix-net-920580-free-homeless-character-sprite-sheets-pixel-art/Homeless_1/Idle.png'
+                            this.img.src = 'Homeless_1/Idle.png'
                         };
                     }, 100);
                     break;
