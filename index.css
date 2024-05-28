@@ -99,7 +99,6 @@ body {
     text-align: center;
 }
 
-
 #gameOver{
     visibility:hidden;
 }
@@ -116,9 +115,11 @@ body {
     width: 100%;
     /* left: 0; */
 }
+
 .btnContainer{
     display: block;
 }
+
 .btn{
     display: block;
 }
@@ -192,3 +193,75 @@ body {
       transform: rotate(-10deg) scale(1.2);
     }
   }
+
+  /* tool tip */
+  .tooltip {
+    position: relative;
+    /* display: inline-block;  */
+    border-bottom: 1px dotted black;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 130%;
+    background-color: rgb(128, 83, 225);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 110%;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+
+  /* custom switch */
+  /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  display: none;
+}
+
+/* The slider */
+.switch label {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+}
+
+.switch label::before {
+  position: absolute;
+  content: "";
+  height: 30px;
+  width: 30px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s;
+}
+
+.switch input:checked + label {
+  background-color: #4c71f2;
+}
+
+.switch input:checked + label::before {
+  transform: translateX(26px);
+}

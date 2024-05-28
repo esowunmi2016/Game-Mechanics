@@ -52,10 +52,17 @@ var trainingBtn = document.getElementById('training')
 var exitSetting = document.getElementById('exitSetting')
 
 var difficultyPage = document.getElementById('difficultyPage')
+var difficultyUp = document.getElementById('difficultyUp')
+var difficultyDown = document.getElementById('difficultyDown')
 var easyBtn = document.getElementById('easyBtn')
 var mediumBtn = document.getElementById('mediumBtn')
 var difficultyBtn = document.getElementById('difficultyBtn')
 var exitDifficulty = document.getElementById('exitDifficulty')
+
+var hitboxPage = document.getElementById('hitboxPage')
+var exitHitbox = document.getElementById('exitHitbox') 
+var hitbox = document.getElementById('hitbox') 
+
 
 
 var backGround = {
@@ -111,6 +118,7 @@ function showHome(){
     pauseContainer.style.display = 'none'
     settingsPage.style.display = 'none'
     restartPage.style.display = 'none'
+    hitboxPage.style.display = 'none'
     closeDifficulty()
 }
 
@@ -149,14 +157,25 @@ function closePause(){
 }
 closePause()
 
-
-showHitBoxBtn.onclick=()=>{
-    if(showHitBox){
-        showHitBoxBtn.innerHTML = 'SHOW HITBOX';
+hitbox.onclick=()=>{
+     if(showHitBox){
+        hitbox.innerHTML = 'HIDDEN'
     }else{
-        showHitBoxBtn.innerHTML = 'HIDE HITBOX';
+        hitbox.innerHTML = 'VISIBLE'
     }
     showHitBox = !showHitBox
+}
+
+showHitBoxBtn.onclick=()=>{
+    // if(showHitBox){
+    //     showHitBoxBtn.innerHTML = 'SHOW HITBOX';
+    // }else{
+    //     showHitBoxBtn.innerHTML = 'HIDE HITBOX';
+    // }
+    // showHitBox = !showHitBox
+    closeSettings()
+    hitboxPage.style.display = 'flex'
+
 }
 
 trainingBtn.onclick=()=>{
@@ -172,6 +191,11 @@ difficultyBtn.onclick =()=>{
 exitDifficulty.onclick =()=>{
     showSettings()
     closeDifficulty()
+}
+
+exitHitbox.onclick =()=>{
+    hitboxPage.style.display = 'none'
+    showSettings()
 }
 
 // Obstacles
@@ -645,6 +669,7 @@ function start(){
         closePause()
     }
 
+    // Render Background
     backGround.drawBG();
     showHome()
 
@@ -686,6 +711,52 @@ function start(){
     jumpButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keypress('ArrowUp')});
     leftButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keypress('ArrowLeft')});
     rightButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keyup('ArrowRight')});
+
+    difficultyUp.addEventListener("click", function(){
+        switch (difficulty) {
+            case 1:
+                easyBtn.innerHTML = `
+                Medium
+                <img src="Skull 004 16x161.png" alt="skull">
+                <img src="Skull 004 16x161.png" alt="skull">
+                `
+                difficulty = 2
+                break;
+            // case 2:
+            //     easyBtn.innerHTML = `
+            //     Hard
+            //     <img src="Skull 004 16x161.png" alt="skull">
+            //     <img src="Skull 004 16x161.png" alt="skull">
+            //     <img src="Skull 004 16x161.png" alt="skull">
+            //     `
+            //     difficulty = 3
+            //     break;
+            default:
+                break;
+        }
+    });
+    difficultyDown.addEventListener("click", function(){
+        switch (difficulty) {
+            case 2:
+                easyBtn.innerHTML = `
+                Easy
+                <img src="Skull 004 16x161.png" alt="skull">
+                `
+                difficulty = 1
+                break;
+            case 3:
+                easyBtn.innerHTML = `
+                Medium
+                <img src="Skull 004 16x161.png" alt="skull">
+                <img src="Skull 004 16x161.png" alt="skull">
+                `
+                difficulty = 2
+                break;
+            default:
+                break;
+        }
+    });
+
     settings.addEventListener("click", function(){
         // console.log(true)
         showSettings()
@@ -698,10 +769,10 @@ function start(){
 
     homeButton.addEventListener('click', function(){
         box1 = new Circle();
-        obs = new Box(0,0,128,128,10,-100,
+        obs = new Box(0,0,128,128,1000,-100,
             isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
             isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
-            'Fire_Spirit/Idle.png',
+            '',
             6,
             hitBoxOffSet={
                 mobile: [37, 70, -75, -100],
@@ -838,20 +909,22 @@ function start(){
         // if not paused Apply collision detection and update 
         if(pauseButton.checked){
             closeSettings()
-            // console.log(pauseButton.checked)
             if( 
                 (
+                    // Collision detection adjustment for right movement
                     box1.speedX > 0 &&
                     isMobile ? 
                     obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+30 && obs.y + obs.height >= box1.y + 15 :
                     obs.x+obs.hbo.desktop[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2]>= box1.x+30 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20
             
+                    // Collision detection adjustment for left movement
                     || 
                     box1.speedX < 0 &&
                     isMobile ? 
                     obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+70 && obs.y + obs.height >= box1.y + 15 :
                     obs.x+obs.hbo.desktop[0]<= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+70 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20 
             
+                    // standing still (no adjustment)
                     ||
                     isMobile ? 
                     obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+50 && obs.y + obs.height >= box1.y + 15 :
@@ -873,21 +946,21 @@ function start(){
                 }
                 
             }else if( 
-                // box1.speedX > 0 &&
+                box1.speedX > 0 &&
                 isMobile ? 
                 obs2.x+obs2.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs2.x+obs2.hbo.mobile[0] + obs2.width+obs2.hbo.mobile[2] >= box1.x+30 && obs2.y + obs2.height >= box1.y + 15 :
                 obs2.x+obs2.hbo.desktop[0]+10 <= box1.x+50 + box1.swidth-100 && obs2.x+obs2.hbo.desktop[0] + obs2.width+obs2.hbo.desktop[2] >= box1.x+60 && obs2.y+obs2.hbo.desktop[1] + 30 <= box1.y+box1.sheight 
     
-                || 
+                // || 
                 // box1.speedX < 0 &&
-                isMobile ? 
-                obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+70 && obs.y + obs.height >= box1.y + 15 :
-                obs.x+obs.hbo.desktop[0]<= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+70 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20 
+                // isMobile ? 
+                // obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+70 && obs.y + obs.height >= box1.y + 15 :
+                // obs.x+obs.hbo.desktop[0]<= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+70 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20 
     
-                ||
-                isMobile ? 
-                obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+50 && obs.y + obs.height >= box1.y + 15 :
-                obs.x+obs.hbo.desktop[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+50 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20
+                // ||
+                // isMobile ? 
+                // obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+50 && obs.y + obs.height >= box1.y + 15 :
+                // obs.x+obs.hbo.desktop[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+50 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20
     
             ){
                 if(!training){

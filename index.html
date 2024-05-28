@@ -16,11 +16,12 @@
         <!-- <canvas id="box2"></canvas>  -->
         <!-- <canvas id="obstacle"></canvas> -->
         
+        <!-- Home Page -->
         <div id="menu" class="btnPage">
             <div class="btnContainer">
                 <button id="start" class="gameButton btn">START</button>
                 <button id="settings" class="gameButton btn" active>SETTINGS</button>
-                <button id="" class="gameButton btn" active>TUTORIAL</button>
+                <!-- <button id="" class="gameButton btn" active>TUTORIAL</button> -->
             </div>
         </div>
         
@@ -35,9 +36,18 @@
         <!-- Settings Page -->
         <div id="settingsPage" class="btnPage">
             <div class="btnContainer">
-                <button id="showHitBox" class="gameButton btn">SHOW HITBOX</button>
-                <button id="difficultyBtn" class="gameButton btn">DIFFICULTY</button>
-                <button id="training" class="gameButton btn">TRAINING</button>
+                <button id="showHitBox" class="gameButton btn tooltip">
+                    SHOW HITBOX
+                    <div class="tooltiptext">Makes player and enemy hitboxes/hurtboxes visible</div>
+                </button>
+                <button id="difficultyBtn" class="gameButton btn tooltip">
+                    DIFFICULTY
+                    <div class="tooltiptext">Crank it up or tone it down, no judgement here 🫣</div>
+                </button>
+                <button id="training" class="gameButton btn tooltip">
+                    TRAINING
+                    <div class="tooltiptext">Make yourself immortal so you can practice. (player hitbox turns red if hitboxes are set to visible)</div>
+                </button>
                 <button id="exitSetting" class="gameButton btn">BACK</button>
             </div>
         </div>
@@ -45,13 +55,15 @@
         <!-- Difficulty Page -->
         <div id="difficultyPage" class="btnPage">
             <div class="btnContainer">
-                <button id="difficultyUp" class="gameButton">
-                    up
-                </button>
+                <img id="difficultyUp" src="upArrow.png" alt="up arrow" style="display: block; margin-left: auto; margin-right: auto;">
+                
                 <button id="easyBtn" class="gameButton btn">
                     EASY 
                     <img src="Skull 004 16x161.png" alt="skull">
                 </button>
+
+                <img id="difficultyDown" src="downArrow.png" alt="up arrow" style="display: block; margin-left: auto; margin-right: auto;">
+
                 <!-- <button id="mediumBtn" class="gameButton btn">
                     MEDIUM
                     <img src="Skull 004 16x161.png" alt="skull">
@@ -65,6 +77,25 @@
                 </button> -->
                 <button id="exitDifficulty" class="gameButton btn">BACK</button>
             </div>
+        </div>
+
+        <!-- Hitbox Toggle Page -->
+        <div id="hitboxPage" class="btnPage">
+            <div class="btnContainer">
+                <div style="display: flex;">
+                    <button id="hitbox" class="gameButton btn">
+                        HIDDEN
+                    </button>
+                    
+                </div>
+                
+                <button id="exitHitbox" class="gameButton btn">BACK</button>
+            </div>
+        </div>
+
+        <!-- Training Toggle Page -->
+        <div id="trainingPage">
+
         </div>
 
         <!-- Pause Page -->
@@ -98,8 +129,6 @@
             </div>
         </div>
 
-    
-
         <!-- Desktop Control Guide -->
         <!-- <div id="controls" class="desktop center">
             left: left arrow key
@@ -118,7 +147,8 @@
         <img id="obstacle2" src="Fire_Spirit/Walk.png" width="128" height="128" />
         <img id="bgImg" src="Ocean_2/5.png"/>
     </div>
+
+
     <script src="index.js"></script>
-    
 </body>
 </html>
