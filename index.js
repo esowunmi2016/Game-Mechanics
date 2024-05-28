@@ -2,7 +2,7 @@
 var fps = 0;
 
 setInterval(()=>{
-    console.log(fps)
+    // console.log(fps)
     fps = 0
 },1000)
 
@@ -88,6 +88,7 @@ var backGround = {
         gameOverText.clearRect(0,0,container.offsetWidth, container.offsetHeight)
     }
 }
+backGround.drawBG()
 
 // LAYOUT FUNCTIONS
 // Display Game Settings Page
@@ -265,7 +266,7 @@ class Box {
     }
 }
 
-// plyer
+// player
 // the draw attribute doesnt use the proper x coordinate, use the update attribute
 class Circle {
     constructor(sx, sy, swidth, sheight, x, y, width, height, hitStun){
@@ -369,7 +370,6 @@ class Circle {
             }
         };
         this.update = function(){
-            console.log('object')
             fps = fps + 1
             if(this.showHurtBox){
                 this.ctx.lineWidth = 1;
@@ -801,8 +801,8 @@ function start(){
 
     document.addEventListener('keydown', (event)=>{event.key == 'Shift' ? inGame ? pause() : {} : {}})
     resumeBtn.addEventListener('click', ()=>pause())
-    easyBtn.addEventListener('click', ()=>difficulty = 1)
-    mediumBtn.addEventListener('click', ()=>difficulty = 2)
+    // easyBtn.addEventListener('click', ()=>difficulty = 1)
+    // mediumBtn.addEventListener('click', ()=>difficulty = 2)
    
     var pause = function(){
         pauseButton.checked ? showPause() : closePause()
@@ -878,16 +878,16 @@ function start(){
                 obs2.x+obs2.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs2.x+obs2.hbo.mobile[0] + obs2.width+obs2.hbo.mobile[2] >= box1.x+30 && obs2.y + obs2.height >= box1.y + 15 :
                 obs2.x+obs2.hbo.desktop[0]+10 <= box1.x+50 + box1.swidth-100 && obs2.x+obs2.hbo.desktop[0] + obs2.width+obs2.hbo.desktop[2] >= box1.x+60 && obs2.y+obs2.hbo.desktop[1] + 30 <= box1.y+box1.sheight 
     
-                // || 
+                || 
                 // box1.speedX < 0 &&
-                // isMobile ? 
-                // obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+70 && obs.y + obs.height >= box1.y + 15 :
-                // obs.x+obs.hbo.desktop[0]<= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+70 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20 
+                isMobile ? 
+                obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+70 && obs.y + obs.height >= box1.y + 15 :
+                obs.x+obs.hbo.desktop[0]<= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+70 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20 
     
-                // ||
-                // isMobile ? 
-                // obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+50 && obs.y + obs.height >= box1.y + 15 :
-                // obs.x+obs.hbo.desktop[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+50 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20
+                ||
+                isMobile ? 
+                obs.x+obs.hbo.mobile[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.mobile[0] + obs.width+obs.hbo.mobile[2] >= box1.x+50 && obs.y + obs.height >= box1.y + 15 :
+                obs.x+obs.hbo.desktop[0] <= box1.x+50 + box1.swidth-100 && obs.x+obs.hbo.desktop[0] + obs.width+obs.hbo.desktop[2] >= box1.x+50 && obs.y+obs.hbo.desktop[1] + obs.height+obs.hbo.desktop[3] >= box1.y + 15 && obs.y+obs.hbo.desktop[1] <= box1.y + box1.sheight - 20
     
             ){
                 if(!training){
@@ -902,7 +902,7 @@ function start(){
                     score = 0
                 }
             }else{
-                training ? box1.boxColor = 'white' : score = 0
+                training ? box1.boxColor = 'white' : ()=>{}
                 updateObjectFrame()
             }
         }else{
