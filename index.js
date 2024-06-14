@@ -1,13 +1,22 @@
 // Utility Functions
-var fps = 0;
+// var fps = 0;
 
-setInterval(()=>{
-    // console.log(fps)
-    fps = 0
-},1000)
-
-const Gravity = .9;
-var frameInterval=(x)=> setInterval(x, 20)
+// Getting FPS
+var fps = {	
+    startTime : 0,	
+    frameNumber : 0,	
+    getFPS : function(){		
+        this.frameNumber++;		
+        var d = new Date().getTime(),			
+        currentTime = ( d - this.startTime ) / 1000,			
+        result = Math.floor( ( this.frameNumber / currentTime ) );		
+        if( currentTime > 1 ){			
+            this.startTime = new Date().getTime();			
+            this.frameNumber = 0;		
+        }		
+        return result;	
+    }	
+};
 
 var init = true;
 var score = 0;
@@ -16,7 +25,13 @@ var showHitBox = false;
 var training = false;
 var inGame = false;
 var difficulty = 1;
+var map = 'ocean';
+var buttonNav = {
+    page: 'home',
+    next:1,
+}
 
+const Gravity = .9;
 
 var mobile = document.getElementById('mobile')
 var isMobile = window.getComputedStyle(mobile).display !== "none" ? true : false;
@@ -38,13 +53,14 @@ var restart = document.getElementById('restart');
 var homeButton = document.getElementById('homeButton')
 
 var menu = document.getElementById('menu');
-var startButton= document.getElementById('start');
+var startButton = document.getElementById('start');
 var settings = document.getElementById('settings');
 
 var pausePage = document.getElementById('pausePage')
 var pauseButton = document.getElementById('pauseCheckbox');
 var pauseContainer = document.getElementById('pause')
 var resumeBtn = document.getElementById('resume')
+var exitGame = document.getElementById('exitGame')
 
 var settingsPage = document.getElementById('settingsPage')
 var showHitBoxBtn = document.getElementById('showHitBox')
@@ -52,18 +68,22 @@ var trainingBtn = document.getElementById('training')
 var exitSetting = document.getElementById('exitSetting')
 
 var difficultyPage = document.getElementById('difficultyPage')
-var difficultyUp = document.getElementById('difficultyUp')
-var difficultyDown = document.getElementById('difficultyDown')
+// var difficultyUp = document.getElementById('difficultyUp')
+// var difficultyDown = document.getElementById('difficultyDown')
 var easyBtn = document.getElementById('easyBtn')
-var mediumBtn = document.getElementById('mediumBtn')
+// var mediumBtn = document.getElementById('mediumBtn')
 var difficultyBtn = document.getElementById('difficultyBtn')
 var exitDifficulty = document.getElementById('exitDifficulty')
+
+var trainingPage = document.getElementById('trainingPage')
+var trainingDsp = document.getElementById('trainingBtn')
+var exitTraining = document.getElementById('exitTraining')
 
 var hitboxPage = document.getElementById('hitboxPage')
 var exitHitbox = document.getElementById('exitHitbox') 
 var hitbox = document.getElementById('hitbox') 
 
-
+var signalIcon = document.getElementById('signalIcon') 
 
 var backGround = {
     drawBG : function(){
@@ -72,14 +92,17 @@ var backGround = {
         bgImg.width = container.offsetWidth;
         bgImg.height = container.offsetHeight;
         bgImg.style.objectFit = '';
+
+
         // ctx.fillStyle = "#000000";
         // ctx.fillRect(0, 0, container.offsetWidth, container.offsetHeight);
-        ctx.drawImage(bgImg, 0, 0, 2304, 1296, 0, 0, container.offsetWidth, container.offsetHeight)
+
+        // ctx.drawImage(bgImg, 0, 0, 2304, 1296, 200, 100, container.offsetWidth, container.offsetHeight) 
         
         floor.width = container.offsetWidth;
-        floor.height = '5';
-        ctx2.fillStyle = "green";
-        ctx2.fillRect(0, 0, floor.offsetWidth, floor.offsetHeight);
+        floor.height = '6';
+        ctx2.fillStyle = "brown";
+        // ctx2.fillRect(0, 0, floor.offsetWidth, floor.offsetHeight);
     },
 
     gameOver : function(){
@@ -89,6 +112,7 @@ var backGround = {
         gameOverText.font = "30px Arial";
         gameOverText.fillText("SCORE: "+ score, container.offsetWidth/2, container.offsetHeight/2+50);
         closePause()
+
     },
 
     clearBG: function(){
@@ -96,6 +120,60 @@ var backGround = {
     }
 }
 backGround.drawBG()
+
+
+
+var stage = {
+    home(){
+        document.body.style.backgroundImage = "url('Ocean_2/2.png')"
+        ctx2.clearRect(0,0,container.offsetWidth, container.offsetHeight)
+
+        
+    },
+    ocean(box1){
+        // document.body.style.backgroundImage = "url('Ocean_2/2.png')"
+        
+        bgImg.src = "Ocean_2/3.png"
+        
+        ctx.drawImage(bgImg, 0, 0, 2304, 1296, 200, 100, container.offsetWidth, container.offsetHeight) 
+        ctx2.fillRect(0, 0, floor.offsetWidth, floor.offsetHeight);
+        
+        box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
+        box1.speedX = 0
+        
+        obs = new Box(0,0,128,128,10,-100,
+            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+            'Fire_Spirit/Idle.png',
+            6,
+            hitBoxOffSet={
+                mobile: [37, 70, -75, -100],
+                desktop: [145, 150, -300, -220]
+            },
+            'fall',
+            'obstacle2',
+            'box'
+        )
+        obs2 = new Box(0,0,128,128,-1000,
+            isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
+            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+            'Fire_Spirit/Walk.png',
+            7,
+            hitBoxOffSet={
+                mobile: [37, 70, -75, -50],
+                desktop: [160, 125, -305, -230]
+            },
+            'dash',
+            'obstacle2',
+            'box'
+        )
+        
+    },
+}
+
+
+
 
 // LAYOUT FUNCTIONS
 // Display Game Settings Page
@@ -119,11 +197,17 @@ function showHome(){
     settingsPage.style.display = 'none'
     restartPage.style.display = 'none'
     hitboxPage.style.display = 'none'
+    trainingPage.style.display = 'none'
     closeDifficulty()
+    stage.home()
+    signalIcon.src = ''
 }
 
 // Show restart page
 function showRestart(){
+
+    buttonNav.page = 'restart'
+    // buttonNav.next = 1
     restartPage.style.display = 'flex'
     
     pauseContainer.style.display = 'none'
@@ -179,11 +263,30 @@ showHitBoxBtn.onclick=()=>{
 }
 
 trainingBtn.onclick=()=>{
-    !training ? trainingBtn.innerHTML='TRAINING OFF': trainingBtn.innerHTML ='TRAINING'
-    training = !training
+    // !training ? trainingBtn.innerHTML='OFF': trainingBtn.innerHTML ='ON'
+    closeSettings()
+    trainingPage.style.display = 'flex'
+    // console.log('test');
+    // training = !training
 }
 
+exitTraining.onclick=()=>{
+    buttonNav.page = 'settings'
+    buttonNav.next = 3
+    trainingPage.style.display = 'none'
+    showSettings()
+}
+
+trainingDsp.onclick=()=>{
+    !training ? trainingDsp.innerHTML='ON': trainingDsp.innerHTML ='OFF'
+    training = !training
+}
+    
+
+
 difficultyBtn.onclick =()=>{
+    buttonNav.page = 'difficulty'
+    buttonNav.next = 1
     showDifficulty()
     closeSettings()
 }
@@ -191,9 +294,13 @@ difficultyBtn.onclick =()=>{
 exitDifficulty.onclick =()=>{
     showSettings()
     closeDifficulty()
+    buttonNav.page = 'settings'
+    buttonNav.next = 2
 }
 
 exitHitbox.onclick =()=>{
+    buttonNav.page = 'settings'
+    buttonNav.next = 1
     hitboxPage.style.display = 'none'
     showSettings()
 }
@@ -266,7 +373,7 @@ class Box {
         
                 // Respawn at Top
                 if(this.y > container.offsetHeight){
-                    this.y = -90;
+                    this.y = -100;
                     this.x = Math.floor(Math.random() * container.offsetWidth - this.width)
                     this.gravitySpeed = 0
                     score += 1;
@@ -282,6 +389,7 @@ class Box {
                 // Respawn at Side
                 if(this.x >= container.offsetWidth){
                     this.x = -200;
+                    score += 1;
                 }
                 break;
         }
@@ -316,6 +424,7 @@ class Circle {
         this.img = document.getElementById("player1");
         this.showHurtBox = showHitBox;
         this.boxColor = 'white';
+        this.jumps = 2;
        
         this.clear = function() {
             this.ctx.clearRect(0, 0, this.box.width, this.box.height);
@@ -368,6 +477,20 @@ class Circle {
             if (this.y > rockbottom) {
               this.y = rockbottom;
               this.speedY = 0;
+              switch (difficulty) {
+                case 1:
+                    this.jumps = 2
+                    break;
+                case 2:
+                    this.jumps = 2
+                    break;
+                case 3:
+                    this.jumps = 1
+                    break;
+              
+                default:
+                    break;
+              }
               hitStun ? this.hitStun() : []
               if(this.speedX > 0){
                     this.img.src = 'Homeless_1/Run.png'
@@ -394,7 +517,6 @@ class Circle {
             }
         };
         this.update = function(){
-            fps = fps + 1
             if(this.showHurtBox){
                 this.ctx.lineWidth = 1;
                 if(this.speedX > 0){
@@ -577,7 +699,21 @@ class Circle {
         this.keypress = function(key){
             switch(key){
                 case(' '):
-                    this.speedY += -15 ;
+                // console.log(this.jumps);
+                    switch (this.jumps) {
+                        case 1:
+                            this.speedY += -15 ;
+                            this.jumps = 0
+                            break;
+                        case 2:
+                            this.speedY += -10 ;
+                            this.jumps = 1
+                            break;
+                    
+                        default:
+                            break;
+                    }
+
                     // this.action = ['jumpUp', 1]
                     // this.xs = 0;
                     // this.airborne = true
@@ -670,7 +806,7 @@ function start(){
     }
 
     // Render Background
-    backGround.drawBG();
+    // backGround.drawBG();
     showHome()
 
     let box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
@@ -689,7 +825,7 @@ function start(){
         'box'
     )
     
-    obs2 = new Box(0,0,128,128,-1000,
+    obs2 = new Box(0,0,128,128,0,
         isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
         isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
         isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
@@ -705,69 +841,750 @@ function start(){
     )
     
     // document.addEventListener('keydown', function(event){console.log(event.key)});
-    document.addEventListener('keydown', function(event){!pauseButton.checked ? {} : box1.keypress(event.key)});
+    var keyboardBtnNav = function(event){
+        // console.log(event.key)
+        // box1.keypress(event.key)
+        if(event.key == 'ArrowDown'){
+            switch (buttonNav.page) {
+                case ('settings'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            showHitBoxBtn.classList.remove('main')
+                            difficultyBtn.classList.add('main')
+
+                            buttonNav.next = 2
+                            break;
+                        case 2:
+                            difficultyBtn.classList.remove('main')
+                            trainingBtn.classList.add('main')
+
+                            buttonNav.next = 3
+
+                            break;
+                        case 3:
+                            trainingBtn.classList.remove('main')
+                            exitSetting.classList.add('main')
+
+                            buttonNav.next = 4
+                            break;
+                        case 4:
+                            exitSetting.classList.remove('main')
+                            showHitBoxBtn.classList.add('main')
+
+                            buttonNav.next = 1
+                            break;
+                        // case 1:
+                        //     showHitBoxBtn.classList.remove('main')
+                        //     difficultyBtn.classList.add('main')
+                        //     break;
+                      
+                        
+                        default:
+                            break;
+                    }
+                    break;
+            
+                case('hitbox'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            exitHitbox.classList.add('main')
+                            hitbox.classList.remove('main')
+
+                            buttonNav.next = 2
+                            break;
+                        case 2:
+                            hitbox.classList.add('main')
+                            exitHitbox.classList.remove('main')
+                            buttonNav.next = 1
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+            
+                case('training'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            exitTraining.classList.add('main')
+                            trainingDsp.classList.remove('main')
+                            buttonNav.next = 2
+                            break;
+                        case 2:
+                            trainingDsp.classList.add('main')
+                            exitTraining.classList.remove('main')
+                            buttonNav.next = 1
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+               
+                case('difficulty'):
+                // console.log('mana');
+                    switch (buttonNav.next) {
+                        case 2:
+                            easyBtn.classList.add('main')
+                            exitDifficulty.classList.remove('main')
+                            buttonNav.next = 1
+                            break;
+                        case 1:
+                            exitDifficulty.classList.add('main')
+                            easyBtn.classList.remove('main')
+                            buttonNav.next = 2
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+           
+                default:
+                    break;
+            }
+        }
+        if(event.key == 'ArrowUp'){
+            switch (buttonNav.page) {
+                case ('settings'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            exitSetting.classList.add('main')
+                            showHitBoxBtn.classList.remove('main')
+
+                            buttonNav.next = 4
+                            break;
+                        case 2:
+                            showHitBoxBtn.classList.add('main')
+                            difficultyBtn.classList.remove('main')
+
+                            buttonNav.next = 1
+
+                            break;
+                        case 3:
+                            difficultyBtn.classList.add('main')
+                            trainingBtn.classList.remove('main')
+
+                            buttonNav.next = 2
+                            break;
+                        case 4:
+                            trainingBtn.classList.add('main')
+                            exitSetting.classList.remove('main')
+
+                            buttonNav.next = 3
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                
+                case('hitbox'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            exitHitbox.classList.add('main')
+                            hitbox.classList.remove('main')
+
+                            buttonNav.next = 2
+
+                            break;
+                        case 2:
+                            hitbox.classList.add('main')
+                            exitHitbox.classList.remove('main')
+                            
+                            buttonNav.next = 1
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+                
+                case('training'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            exitTraining.classList.add('main')
+                            trainingDsp.classList.remove('main')
+                            buttonNav.next = 2
+                            break;
+                        case 2:
+                            trainingDsp.classList.add('main')
+                            exitTraining.classList.remove('main')
+                            buttonNav.next = 1
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+               
+                case('difficulty'):
+                // console.log('mana');
+                    switch (buttonNav.next) {
+                        case 2:
+                            easyBtn.classList.add('main')
+                            exitDifficulty.classList.remove('main')
+                            buttonNav.next = 1
+                            break;
+                        case 1:
+                            exitDifficulty.classList.add('main')
+                            easyBtn.classList.remove('main')
+                            buttonNav.next = 2
+                            break;
+                    
+                        default:
+                            break;
+                    }
+                break;
+
+                default:
+                    break;
+            }
+        }
+        if(event.key == ' '){
+            switch (buttonNav.page) {
+                case ('settings'):
+                    switch (buttonNav.next) {
+                        case 1:
+                            closeSettings()
+                            hitboxPage.style.display = 'flex'
+                            hitbox.classList.add('main')
+                            exitHitbox.classList.remove ('main')
+
+                            buttonNav.page = 'hitbox'
+                            buttonNav.next = 1
+
+                            break;
+                        case 2:
+                            closeSettings()
+                            showDifficulty()
+
+                            buttonNav.page = 'difficulty'
+                            buttonNav.next = 1
+                            break;
+                        case 3:
+                            closeSettings()
+                            trainingPage.style.display = "flex"
+                            trainingDsp.classList.add('main')
+                            exitTraining.classList.remove('main')
+
+
+                            buttonNav.next = 1
+                            buttonNav.page = 'training'
+                            break;
+                        case 4:
+                            buttonNav.page = 'home'
+                            buttonNav.next = 2
+
+                            showHitBoxBtn.classList.add('main')
+                            exitSetting.classList.remove('main')
+
+                            !pauseButton.checked ? showHome() : {}
+                            !pauseButton.checked ? pauseButton.checked = !pauseButton.checked : {}
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                    
+                    case('hitbox'):
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(showHitBox){
+                                    hitbox.innerHTML = 'HIDDEN'
+                                }else{
+                                    hitbox.innerHTML = 'VISIBLE'
+                                }
+                                showHitBox = !showHitBox
+                                break;
+
+                                case 2:
+                                    buttonNav.page = 'settings'
+                                    buttonNav.next = 1
+                                    hitboxPage.style.display = 'none'
+                                    // exitTraining.classList.remove('main')
+                                    showSettings()
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    break;
+               
+                    case('training'):
+                        switch (buttonNav.next) {
+                            case 1:
+                                !training ? trainingDsp.innerHTML='ON': trainingDsp.innerHTML ='OFF'
+                                training = !training
+                                break;
+
+                            case 2:
+                                buttonNav.page = 'settings'
+                                buttonNav.next = 3
+                                trainingPage.style.display = 'none'
+                                showSettings()
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                    break;
+               
+                    case 'difficulty':
+                        switch (buttonNav.next) {
+                            case 1:
+                                switch (difficulty) {
+                                    case 1:
+                                        easyBtn.innerHTML = `
+                                        MEDIUM
+                                        <img src="Skull 004 16x161.png" alt="skull">
+                                        <img src="Skull 004 16x161.png" alt="skull">
+                                        `
+                                        difficulty = 2
+                                        break;
+                                    case 2:
+                                        easyBtn.innerHTML = `
+                                        HARD
+                                        <img src="Skull 004 16x161.png" alt="skull">
+                                        <img src="Skull 004 16x161.png" alt="skull">
+                                        <img src="Skull 004 16x161.png" alt="skull">
+                                        `
+                                        difficulty = 3
+                                        break;
+                                    case 3:
+                                        easyBtn.innerHTML = `
+                                        EASY
+                                        <img src="Skull 004 16x161.png" alt="skull">
+                                        `
+                                        difficulty = 1
+                                        break;
+                                }
+                                break;
+                            case 2:
+                                showSettings()
+                                closeDifficulty()
+                                buttonNav.page = 'settings'
+                                buttonNav.next = 2
+                                break;
+
+                        
+                            default:
+                                break;
+                        }
+                        break;
+
+                    default:
+                    break;
+            }
+        }
+    }
+
+    var keyboardHomeNav = function(event){
+        box1.keypress(event.key)
+        switch (event.key) {
+            case 'ArrowDown':
+                switch (buttonNav.page) {
+                    case 'home':
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(!inGame){
+                                    startButton.classList.remove('main')
+                                    settings.classList.add('main')
+                                    buttonNav.next = 2
+                                }
+                                break;
+                            case 2:
+                                if(!inGame){
+                                    startButton.classList.add('main')
+                                    settings.classList.remove('main')
+                                    buttonNav.next = 1
+                                }
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        break;
+                    
+                    case 'restart':
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(!inGame){
+                                    restart.classList.remove('main')
+                                    homeButton.classList.add('main')
+                                    buttonNav.next = 2
+                                }
+                                break;
+                            case 2:
+                                if(!inGame){
+                                    restart.classList.add('main')
+                                    homeButton.classList.remove('main')
+                                    buttonNav.next = 1
+                                }
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        break;
+                    
+                    default:
+                        break;
+                }
+                break;
+            
+            case 'ArrowUp':
+                switch (buttonNav.page) {
+                    case 'home':
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(!inGame){
+                                    startButton.classList.remove('main')
+                                    settings.classList.add('main')
+                                    buttonNav.next = 2
+                                }
+                                break;
+                            case 2:
+                                if(!inGame){
+                                    startButton.classList.add('main')
+                                    settings.classList.remove('main')
+                                    buttonNav.next = 1
+                                }
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        break;
+                    
+                    case 'restart':
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(!inGame){
+                                    restart.classList.remove('main')
+                                    homeButton.classList.add('main')
+                                    buttonNav.next = 2
+                                }
+                                break;
+                            case 2:
+                                if(!inGame){
+                                    restart.classList.add('main')
+                                    homeButton.classList.remove('main')
+                                    buttonNav.next = 1
+                                }
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        break;
+                    
+                    
+                    default:
+                        break;
+                }
+                break;
+            
+            case ' ':
+                switch (buttonNav.page) {
+                    case 'home':
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(!inGame){
+                                    switch (map) {
+                                        case 'ocean':
+                                            stage.ocean(box1)
+                                            break;
+                                    
+                                        default:
+                                            break;
+                                    }
+
+                                    stage
+                                    buttonNav.page = 'home'
+                                    buttonNav.next = 1
+                                    
+                                    inGame = true;
+                                    score = 0
+                                    menu.style.display = 'none'
+                                    pauseContainer.style.display = 'block'
+                                    box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
+                                    box1.speedX = 0
+        
+                                        obs = new Box(0,0,128,128,10,-100,
+                                            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                            'Fire_Spirit/Idle.png',
+                                            6,
+                                            hitBoxOffSet={
+                                                mobile: [37, 70, -75, -100],
+                                                desktop: [145, 150, -300, -220]
+                                            },
+                                            'fall',
+                                            'obstacle2',
+                                            'box'
+                                        )
+                                        obs2 = new Box(0,0,128,128,-1000,
+                                            isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
+                                            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                            'Fire_Spirit/Walk.png',
+                                            7,
+                                            hitBoxOffSet={
+                                                mobile: [37, 70, -75, -50],
+                                                desktop: [160, 125, -305, -230]
+                                            },
+                                            'dash',
+                                            'obstacle2',
+                                            'box'
+                                        )
+        
+                                    if(init){
+                                    init = false
+                                    setInterval(update, 20)
+                                }
+                            }
+                                break;
+                            case 2:
+                                if(!inGame){
+                                    buttonNav.page = 'settings'
+                                    buttonNav.next = 1
+                                    showSettings()
+                                    pauseButton.checked = !pauseButton.checked
+                                }
+                            break;
+                            default:
+                                break;
+                        }
+                        break;
+                    
+                    case 'restart':
+                        switch (buttonNav.next) {
+                            case 1:
+                                if(!inGame){
+                                    inGame = true
+                                    restartPage.style.display = 'none'
+                                    backGround.drawBG()
+                                    score = 0
+                                    box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
+                                    switch (map) {
+                                        case 'ocean':
+                                            stage.ocean(box1)
+                                            break;
+                                    
+                                        default:
+                                            break;
+                                    }
+                                //     obs = new Box(0,0,128,128,10,-100,
+                                //         isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                //         isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                //         'Fire_Spirit/Idle.png',
+                                //         6,
+                                //         hitBoxOffSet={
+                                //             mobile: [37, 70, -75, -100],
+                                //             desktop: [145, 150, -300, -220]
+                                //         },
+                                //         'fall',
+                                //         'obstacle2',
+                                //         'box'
+                                //     )
+                                //     obs2 = new Box(0,0,128,128,-0,
+                                //     isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
+                                //     isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                //     isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                //     'Fire_Spirit/Walk.png',
+                                //     7,
+                                //     hitBoxOffSet={
+                                //         mobile: [37, 70, -75, -50],
+                                //         desktop: [160, 125, -305, -230]
+                                //     },
+                                //     'dash',
+                                //     'obstacle2',
+                                //     'box'
+                                // )
+                                }
+                                break;
+                            case 2:
+                                if(!inGame){
+                                    buttonNav.page = 'home'
+                                    // buttonNav.next = 1
+
+                                    box1 = new Circle();
+                                    obs = new Box(0,0,128,128,1000,-100,
+                                        isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                        isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                        '',
+                                        6,
+                                        hitBoxOffSet={
+                                            mobile: [37, 70, -75, -100],
+                                            desktop: [145, 150, -300, -220]
+                                        },
+                                        'fall',
+                                        'obstacle2',
+                                        'box'
+                                    )
+                                    obs2 = new Box(0,0,128,128,-1000,-1000,
+                                        // isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
+                                        isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                        isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                        'Fire_Spirit/Walk.png',
+                                        7,
+                                        hitBoxOffSet={
+                                            mobile: [37, 70, -75, -50],
+                                            desktop: [160, 125, -305, -230]
+                                        },
+                                        'dash',
+                                        'obstacle2',
+                                        'box'
+                                    )
+                                    backGround.drawBG()
+                                    showHome()
+                                }
+                                break;
+                        
+                            default:
+                                break;
+                        }
+                        break;
+                    
+                    
+                    default:
+                        if(!inGame){
+                            inGame = true
+                            restartPage.style.display = 'none'
+                            backGround.drawBG()
+                            score = 0
+                            box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
+                            obs = new Box(0,0,128,128,10,-100,
+                                isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                                isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                                'Fire_Spirit/Idle.png',
+                                6,
+                                hitBoxOffSet={
+                                    mobile: [37, 70, -75, -100],
+                                    desktop: [145, 150, -300, -220]
+                                },
+                                'fall',
+                                'obstacle2',
+                                'box'
+                            )
+                            obs2 = new Box(0,0,128,128,-0,
+                            isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
+                            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+                            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+                            'Fire_Spirit/Walk.png',
+                            7,
+                            hitBoxOffSet={
+                                mobile: [37, 70, -75, -50],
+                                desktop: [160, 125, -305, -230]
+                            },
+                            'dash',
+                            'obstacle2',
+                            'box'
+                        )
+                        }
+                        break;
+                }
+                break;
+            
+            default:
+                break;
+        }
+        
+    }
+
+    document.addEventListener('keydown', function(event){!pauseButton.checked ? keyboardBtnNav(event) : keyboardHomeNav(event)});
+
+    
     document.addEventListener('keyup', function(event){!pauseButton.checked ? {} : box1.keyup(event.key)});
     jumpButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keypress(' ')});
     jumpButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keypress('ArrowUp')});
     leftButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keypress('ArrowLeft')});
     rightButton.addEventListener("click", function(){!pauseButton.checked ? {} : box1.keyup('ArrowRight')});
 
-    difficultyUp.addEventListener("click", function(){
-        switch (difficulty) {
-            case 1:
-                easyBtn.innerHTML = `
-                Medium
-                <img src="Skull 004 16x161.png" alt="skull">
-                <img src="Skull 004 16x161.png" alt="skull">
-                `
-                difficulty = 2
-                break;
-            // case 2:
-            //     easyBtn.innerHTML = `
-            //     Hard
-            //     <img src="Skull 004 16x161.png" alt="skull">
-            //     <img src="Skull 004 16x161.png" alt="skull">
-            //     <img src="Skull 004 16x161.png" alt="skull">
-            //     `
-            //     difficulty = 3
-            //     break;
-            default:
-                break;
-        }
-    });
-    difficultyDown.addEventListener("click", function(){
-        switch (difficulty) {
-            case 2:
-                easyBtn.innerHTML = `
-                Easy
-                <img src="Skull 004 16x161.png" alt="skull">
-                `
-                difficulty = 1
-                break;
-            case 3:
-                easyBtn.innerHTML = `
-                Medium
-                <img src="Skull 004 16x161.png" alt="skull">
-                <img src="Skull 004 16x161.png" alt="skull">
-                `
-                difficulty = 2
-                break;
-            default:
-                break;
-        }
-    });
+    // difficultyUp.addEventListener("click", function(){
+    //     switch (difficulty) {
+    //         case 1:
+    //             easyBtn.innerHTML = `
+    //             MEDIUM
+    //             <img src="Skull 004 16x161.png" alt="skull">
+    //             <img src="Skull 004 16x161.png" alt="skull">
+    //             `
+    //             difficulty = 2
+    //             break;
+    //         // case 2:
+    //         //     easyBtn.innerHTML = `
+    //         //     Hard
+    //         //     <img src="Skull 004 16x161.png" alt="skull">
+    //         //     <img src="Skull 004 16x161.png" alt="skull">
+    //         //     <img src="Skull 004 16x161.png" alt="skull">
+    //         //     `
+    //         //     difficulty = 3
+    //         //     break;
+    //         default:
+    //             break;
+    //     }
+    // });
+    // difficultyDown.addEventListener("click", function(){
+    //     switch (difficulty) {
+    //         case 2:
+    //             easyBtn.innerHTML = `
+    //             Easy
+    //             <img src="Skull 004 16x161.png" alt="skull">
+    //             `
+    //             difficulty = 1
+    //             break;
+    //         case 3:
+    //             easyBtn.innerHTML = `
+    //             Medium
+    //             <img src="Skull 004 16x161.png" alt="skull">
+    //             <img src="Skull 004 16x161.png" alt="skull">
+    //             `
+    //             difficulty = 2
+    //             break;
+    //         default:
+    //             break;
+    //     }
+    // });
 
     settings.addEventListener("click", function(){
         // console.log(true)
+        buttonNav.page = 'settings'
+        buttonNav.next = 1
         showSettings()
         pauseButton.checked = !pauseButton.checked
     });
     exitSetting.addEventListener("click", function(){
+        buttonNav.page = 'home'
+        buttonNav.next = 1
         !pauseButton.checked ? showHome() : {}
         !pauseButton.checked ? pauseButton.checked = !pauseButton.checked : {}
+        
     });
 
+    // exitGame.addEventListener("click", function(){
+    //     !pauseButton.checked ? pauseButton.checked = !pauseButton.checked : {}
+    //     closePause()
+    //     box1 = new Circle();
+    //     obs = new Box(0,0,128,128,1000,-100,
+    //         isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+    //         isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+    //         '',
+    //         6,
+    //         hitBoxOffSet={
+    //             mobile: [37, 70, -75, -100],
+    //             desktop: [145, 150, -300, -220]
+    //         },
+    //         'fall',
+    //         'obstacle2',
+    //         'box'
+    //     )
+    //     backGround.drawBG()
+    //     showHome()
+    // })
+
     homeButton.addEventListener('click', function(){
+        buttonNav.page = 'home'
+        buttonNav.next =1
         box1 = new Circle();
         obs = new Box(0,0,128,128,1000,-100,
             isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
@@ -782,6 +1599,20 @@ function start(){
             'obstacle2',
             'box'
         )
+        obs2 = new Box(0,0,128,128,-1000,-1000,
+            // isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
+            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
+            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
+            'Fire_Spirit/Walk.png',
+            7,
+            hitBoxOffSet={
+                mobile: [37, 70, -75, -50],
+                desktop: [160, 125, -305, -230]
+            },
+            'dash',
+            'obstacle2',
+            'box'
+        )
         backGround.drawBG()
         showHome()
     })  
@@ -791,80 +1622,44 @@ function start(){
         score = 0
         menu.style.display = 'none'
         pauseContainer.style.display = 'block'
-        box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
-        box1.speedX = 0
+
+        switch (map) {
+            case 'ocean':
+                stage.ocean(box1)
+                break;
         
-            obs = new Box(0,0,128,128,10,-100,
-                isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
-                isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
-                'Fire_Spirit/Idle.png',
-                6,
-                hitBoxOffSet={
-                    mobile: [37, 70, -75, -100],
-                    desktop: [145, 150, -300, -220]
-                },
-                'fall',
-                'obstacle2',
-                'box'
-            )
-            obs2 = new Box(0,0,128,128,-1000,
-                isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
-                isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
-                isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
-                'Fire_Spirit/Walk.png',
-                7,
-                hitBoxOffSet={
-                    mobile: [37, 70, -75, -50],
-                    desktop: [160, 125, -305, -230]
-                },
-                'dash',
-                'obstacle2',
-                'box'
-            )
+            default:
+                break;
+        }
+        
         
         if(init){
             init = false
-            setInterval(update, 20)
+            setInterval(update, 20 )
         }
        
     });
 
     restart.addEventListener('click', function(){
+        buttonNav.next = 1
         inGame = true
         restartPage.style.display = 'none'
         backGround.drawBG()
         score = 0
-        box1 = new Circle(0, 60, 128, 130, container.offsetWidth/2 - 65, container.offsetHeight/2, 128, 128);
-        obs = new Box(0,0,128,128,10,-100,
-            isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
-            isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
-            'Fire_Spirit/Idle.png',
-            6,
-            hitBoxOffSet={
-                mobile: [37, 70, -75, -100],
-                desktop: [145, 150, -300, -220]
-            },
-            'fall',
-            'obstacle2',
-            'box'
-        )
-        obs2 = new Box(0,0,128,128,-0,
-        isMobile ? container.offsetHeight*.8 : container.offsetHeight*.7,
-        isMobile ? container.offsetWidth/4 : container.offsetWidth/4,
-        isMobile ? container.offsetHeight/4 : container.offsetHeight/2,
-        'Fire_Spirit/Walk.png',
-        7,
-        hitBoxOffSet={
-            mobile: [37, 70, -75, -50],
-            desktop: [160, 125, -305, -230]
-        },
-        'dash',
-        'obstacle2',
-        'box'
-    )
+        switch (map) {
+            case 'ocean':
+                stage.ocean(box1)
+                break;
+        
+            default:
+                break;
+        }
     })  
 
     showHitBoxBtn.addEventListener('click', ()=> {
+        buttonNav.page = 'hitbox'
+        buttonNav.next = 1
+
         box1.showHurtBox = showHitBox;
         obs.showHitBox = showHitBox;
         obs2.showHitBox = showHitBox;
@@ -874,6 +1669,36 @@ function start(){
     resumeBtn.addEventListener('click', ()=>pause())
     // easyBtn.addEventListener('click', ()=>difficulty = 1)
     // mediumBtn.addEventListener('click', ()=>difficulty = 2)
+
+    easyBtn.addEventListener('click', function(){
+        switch (difficulty) {
+            case 1:
+                easyBtn.innerHTML = `
+                MEDIUM
+                <img src="Skull 004 16x161.png" alt="skull">
+                <img src="Skull 004 16x161.png" alt="skull">
+                `
+                difficulty = 2
+                break;
+            case 2:
+                easyBtn.innerHTML = `
+                HARD
+                <img src="Skull 004 16x161.png" alt="skull">
+                <img src="Skull 004 16x161.png" alt="skull">
+                <img src="Skull 004 16x161.png" alt="skull">
+                `
+                difficulty = 3
+                break;
+            case 3:
+                easyBtn.innerHTML = `
+                EASY
+                <img src="Skull 004 16x161.png" alt="skull">
+                `
+                difficulty = 1
+                break;
+        }
+    })
+
    
     var pause = function(){
         pauseButton.checked ? showPause() : closePause()
@@ -881,6 +1706,9 @@ function start(){
         // showPause()
     }
     var updateObjectFrame =()=> {
+        // backGround.drawBG()
+
+
         box1.clear()
         obs.clear()
         if(difficulty > 1){
@@ -900,12 +1728,22 @@ function start(){
         }
     } 
 
-
-   
     // box1.update();
     // setInterval(update, 20);
 
     function update(){
+
+        // console.log(fps.getFPS());
+        if(fps.getFPS() <= 15){
+            signalIcon.src = 'signalLow.png'
+        }else if(fps.getFPS() > 15 && fps.getFPS() <= 30){
+            signalIcon.src = 'signalMid.png'
+        }else if(fps.getFPS() > 30 && fps.getFPS() <= 40){
+            signalIcon.src = 'signalMid-high.png'
+        }else{
+            signalIcon.src = 'signalHigh.png'
+        }
+
         // if not paused Apply collision detection and update 
         if(pauseButton.checked){
             closeSettings()
@@ -981,7 +1819,9 @@ function start(){
         }else{
             // showSettings()
         }
-     }
+
+   
+    }
 
     
 }

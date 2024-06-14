@@ -9,18 +9,24 @@
 </head>
 <body>
     <div id="container">
-        <canvas id="floor"></canvas>
         <canvas id="box"></canvas> 
+        <canvas id="floor"></canvas>
         <canvas id="canvas"></canvas>
         <canvas id="gameOverCanvas"></canvas>
+        <!-- <div id="background">
+            <img src="Ocean_2/5.png" /> 
+            help
+        </div> -->
         <!-- <canvas id="box2"></canvas>  -->
         <!-- <canvas id="obstacle"></canvas> -->
         
         <!-- Home Page -->
         <div id="menu" class="btnPage">
             <div class="btnContainer">
-                <button id="start" class="gameButton btn">START</button>
-                <button id="settings" class="gameButton btn" active>SETTINGS</button>
+                <!-- <div class="main"> -->
+                    <button id="start" class="gameButton btn main" >START</button>
+                <!-- </div> -->
+                <button id="settings" class="gameButton btn">SETTINGS</button>
                 <!-- <button id="" class="gameButton btn" active>TUTORIAL</button> -->
             </div>
         </div>
@@ -28,7 +34,7 @@
         <!-- Restart Page -->
         <div id="restartPage" class="btnPage">
             <div class="btnContainer restart">
-                <button id="restart" class="gameButton restart">RESTART</button>
+                <button id="restart" class="gameButton restart main">RESTART</button>
                 <button id="homeButton" class="gameButton restart">HOME</button>
             </div>
         </div>
@@ -36,8 +42,8 @@
         <!-- Settings Page -->
         <div id="settingsPage" class="btnPage">
             <div class="btnContainer">
-                <button id="showHitBox" class="gameButton btn tooltip">
-                    SHOW HITBOX
+                <button id="showHitBox" class="gameButton btn tooltip main">
+                    HITBOX
                     <div class="tooltiptext">Makes player and enemy hitboxes/hurtboxes visible</div>
                 </button>
                 <button id="difficultyBtn" class="gameButton btn tooltip">
@@ -55,26 +61,16 @@
         <!-- Difficulty Page -->
         <div id="difficultyPage" class="btnPage">
             <div class="btnContainer">
-                <img id="difficultyUp" src="upArrow.png" alt="up arrow" style="display: block; margin-left: auto; margin-right: auto;">
-                
-                <button id="easyBtn" class="gameButton btn">
-                    EASY 
-                    <img src="Skull 004 16x161.png" alt="skull">
-                </button>
+                <div style="display: flexbox;">
 
-                <img id="difficultyDown" src="downArrow.png" alt="up arrow" style="display: block; margin-left: auto; margin-right: auto;">
-
-                <!-- <button id="mediumBtn" class="gameButton btn">
-                    MEDIUM
-                    <img src="Skull 004 16x161.png" alt="skull">
-                    <img src="Skull 004 16x161.png" alt="skull">
-                </button> -->
-                <!-- <button id="hardBtn" class="gameButton btn">
-                    HARD
-                    <img src="Skull 004 16x161.png" alt="skull">
-                    <img src="Skull 004 16x161.png" alt="skull">
-                    <img src="Skull 004 16x161.png" alt="skull">
-                </button> -->
+                    <!-- <img id="difficultyUp" src="upArrow.png" alt="up arrow" style="display: block; margin-left: auto; margin-right: auto;"> -->
+                    
+                    <button id="easyBtn" class="gameButton btn main">
+                        EASY 
+                        <img src="Skull 004 16x161.png" alt="skull">
+                    </button>
+                    <!-- <img id="difficultyDown" src="downArrow.png" alt="up arrow" style="display: block; margin-left: auto; margin-right: auto;"> -->
+                </div>
                 <button id="exitDifficulty" class="gameButton btn">BACK</button>
             </div>
         </div>
@@ -94,16 +90,20 @@
         </div>
 
         <!-- Training Toggle Page -->
-        <div id="trainingPage">
-
+        <div id="trainingPage" class="btnPage">
+            <div class="btnContainer">
+                <button id="trainingBtn" class="gameButton btn">OFF</button>
+                <button id="exitTraining" class="gameButton btn">BACK</button>
+                <!-- <button id="settings" class="gameButton btn" active>SETTINGS</button> -->
+            </div>
         </div>
 
         <!-- Pause Page -->
         <div id="pausePage" class="btnPage">
             <div class="btnContainer">
-                <!-- <button id="showHitBox" class="gameButton btn">HOME</button> -->
-                <!-- <button id="settings" class="gameButton btn" active>SETTINGS</button> -->
                 <button id="resume" class="gameButton btn">RESUME</button>
+                <!-- <button id="exitGame" class="gameButton btn">HOME</button> -->
+                <!-- <button id="settings" class="gameButton btn" active>SETTINGS</button> -->
             </div>
         </div>
 
@@ -113,6 +113,11 @@
                     <svg viewBox="0 0 384 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="play"><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"></path></svg>
                     <svg viewBox="0 0 320 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="pause"><path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z"></path></svg>
             </label>
+
+        <!-- refresh rate icon -->
+        <div id="signalContainer" style="display: none;">
+            <img id="signalIcon" src="" />
+        </div>
 
         <!-- Mobile View Buttons -->
         <div style="background-color: aqua;">
@@ -136,16 +141,14 @@
             jump: space bar
         </div> -->
 
-        <!-- <div id="gameOver" class="center">
-            <button id="score" class="gameButton">START</button>
-        </div> -->
+       
     </div>
 
     <div style="display:none;">
         <img id="player1" src="Homeless_1/Idle.png" width="128" height="128" />
         <img id="obstacle" src="Fire_Spirit/Idle.png" width="128" height="128" />
         <img id="obstacle2" src="Fire_Spirit/Walk.png" width="128" height="128" />
-        <img id="bgImg" src="Ocean_2/5.png"/>
+        <img id="bgImg" src="Ocean_2/3.png" />
     </div>
 
 
